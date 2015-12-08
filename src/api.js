@@ -25,10 +25,10 @@ function options(method, url, data) {
   };
 }
 function wrap(http) {
-  http.get = (url, data, cache) => cache(http(options('GET', url, data)));
-  http.del = (url, data) => queue(http(options('DELETE', url, data)));
-  http.post = (url, data) => queue(http(options('POST', url, data)));
-  http.put = (url, data) => queue(http(options('PUT', url, data)));
+  http.get = (url, data, cache) => cache(http, options('GET', url, data));
+  http.del = queue((url, data) => http(options('DELETE', url, data)));
+  http.post = queue((url, data) => http(options('POST', url, data)));
+  http.put = queue((url, data) => http(options('PUT', url, data)));
   return http;
 }
 

@@ -1,6 +1,12 @@
 var queued = [];
 var isExecuting = false;
 
+function addToQueue(func, args) {
+  return new Promise((resolve, reject) => {
+    queued.push({func, args, resolve, reject});
+  });
+}
+
 function next() {
   if(isExecuting) { return; }
   if(!queued.length) { return; }
@@ -11,18 +17,19 @@ function next() {
     .then(result => {
       isExecuting = false;
       next();
-      return result;
+      cmd.resolve(result);
     })
     .catch(err => {
       isExecuting = false;
       next();
-      return Promise.reject(err);
+      cmd.reject(err);
     });
 }
 
 export default function queue(func) {
-  return function (...args) {
-    queued.push({func, args});
+  return function () {
+    var promise = addToQueue(func, arguments);
     next();
+    return promise;
   };
 }

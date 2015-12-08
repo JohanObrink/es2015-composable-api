@@ -12,7 +12,8 @@ var src = {
 	libs: 'src/libs/**',
 	scripts: {
 		all: 'src/**/*.js',
-		main: 'src/main.js'
+		main: 'src/api.private.js',
+		angular: 'src/api.private.angular.js'
 	}
 };
 
@@ -20,7 +21,7 @@ var build = 'build/';
 var out = {
 	libs: build + 'libs/',
 	scripts: {
-		file: 'api.js',
+		angular: 'api.private.module.js',
 		folder: build
 	}
 }
@@ -51,7 +52,7 @@ gulp.task('libs', function() {
 gulp.task('scripts', ['jshint'], function() {
 
 	var sources = browserify({
-		entries: src.scripts.main,
+		entries: src.scripts.angular,
 		debug: true // Build source maps
 	})
 	.transform(babelify.configure({
@@ -60,7 +61,7 @@ gulp.task('scripts', ['jshint'], function() {
 	}));
 
 	return sources.bundle()
-		.pipe(vinylSourceStream(out.scripts.file))
+		.pipe(vinylSourceStream(out.scripts.angular))
 		.pipe(vinylBuffer())
 		.pipe(plugins.sourcemaps.init({
 			loadMaps: true // Load the sourcemaps browserify already generated
